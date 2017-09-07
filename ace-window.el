@@ -700,6 +700,13 @@ Modify `aw-fair-aspect-ratio' to tweak behavior."
       (aw--switch-buffer)
     (aw-flip-window)))
 
+(defun aw-execute-command-other-window (window)
+  "Exectute a command in WINDOW."
+  (aw-switch-to-window window)
+  (unwind-protect
+      (funcall (key-binding (read-key-sequence "ACE - Enter key sequence: ")))
+    (aw-flip-window)))
+
 (defun aw-offset (window)
   "Return point in WINDOW that's closest to top left corner.
 The point is writable, i.e. it's not part of space after newline."
