@@ -693,19 +693,37 @@ Modify `aw-fair-aspect-ratio' to tweak behavior."
         (aw-split-window-horz window)
       (aw-split-window-vert window))))
 
+(defmacro aw--do-in-other-window (&rest body)
+  "Switch to WINDOW, do BODY, then switch back."
+  `(progn
+     (aw-switch-to-window window)
+     (unwind-protect
+         (progn ,@body)
+       (aw-flip-window))))
+
 (defun aw-switch-buffer-other-window (window)
   "Switch buffer in WINDOW."
-  (aw-switch-to-window window)
-  (unwind-protect
-      (aw--switch-buffer)
-    (aw-flip-window)))
+  (aw--do-in-other-window
+   (aw--switch-buffer)))
 
 (defun aw-execute-command-other-window (window)
-  "Exectute a command in WINDOW."
-  (aw-switch-to-window window)
-  (unwind-protect
-      (funcall (key-binding (read-key-sequence "ACE - Enter key sequence: ")))
-    (aw-flip-window)))
+  "Execute a command in WINDOW."
+  (aw--do-in-other-window
+   (funcall (key-binding (read-key-sequence "ACE - Enter key sequence: ")))))
+
+;; (defun aw-switch-buffer-other-window (window)
+;;   "Switch buffer in WINDOW."
+;;   (aw-switch-to-window window)
+;;   (unwind-protect
+;;       (aw--switch-buffer)
+;;     (aw-flip-window)))
+
+;; (defun aw-execute-command-other-window (window)
+;;   "Exectute a command in WINDOW."
+;;   (aw-switch-to-window window)
+;;   (unwind-protect
+;;       (funcall (key-binding (read-key-sequence "ACE - Enter key sequence: ")))
+;;     (aw-flip-window)))
 
 (defun aw-offset (window)
   "Return point in WINDOW that's closest to top left corner.
